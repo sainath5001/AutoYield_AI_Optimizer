@@ -6,9 +6,10 @@ import { RiskBadge } from "./RiskBadge";
 type Props = {
   vault: Vault;
   onInvest?: (vault: Vault) => void;
+  busy?: boolean;
 };
 
-export function YieldOpportunityCard({ vault, onInvest }: Props) {
+export function YieldOpportunityCard({ vault, onInvest, busy }: Props) {
   return (
     <article className="group flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 shadow-xl transition hover:border-emerald-500/30 hover:bg-zinc-900/80">
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -29,7 +30,7 @@ export function YieldOpportunityCard({ vault, onInvest }: Props) {
       </p>
       <button
         type="button"
-        disabled={vault.isTransactional === false}
+        disabled={vault.isTransactional === false || busy}
         onClick={() => onInvest?.(vault)}
         title={
           vault.isTransactional === false
@@ -38,7 +39,11 @@ export function YieldOpportunityCard({ vault, onInvest }: Props) {
         }
         className="mt-auto w-full rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:from-emerald-500 hover:to-cyan-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:from-emerald-600 disabled:hover:to-cyan-600"
       >
-        {vault.isTransactional === false ? "Unavailable" : "Invest"}
+        {busy
+          ? "Confirm in wallet…"
+          : vault.isTransactional === false
+            ? "Unavailable"
+            : "Invest"}
       </button>
     </article>
   );

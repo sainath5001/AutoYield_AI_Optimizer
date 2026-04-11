@@ -41,5 +41,8 @@ npm run dev:backend
 | --- | --- | --- |
 | GET | `/api/health` | Liveness |
 | GET | `/api/vaults` | USDC vaults on Ethereum + Arbitrum (sorted by APY, from [Earn Data API](https://docs.li.fi/earn/overview)) |
+| POST | `/api/recommendation` | Body: `{ vaults, preference }` — OpenAI pick + reason (heuristic fallback if `OPENAI_API_KEY` unset) |
 
-Run **both** `dev:backend` and `dev:frontend` so the dashboard can load vaults.
+Set **`OPENAI_API_KEY`** in `backend/.env` for live AI recommendations; without it, the API uses a deterministic fallback.
+
+Run **both** `dev:backend` and `dev:frontend` so the dashboard can load vaults and AI.

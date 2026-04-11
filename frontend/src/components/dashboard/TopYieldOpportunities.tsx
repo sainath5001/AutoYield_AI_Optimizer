@@ -5,9 +5,15 @@ import { YieldOpportunityCard } from "@/components/yield/YieldOpportunityCard";
 
 type Props = {
   opportunities: Vault[];
+  onInvest: (vault: Vault) => void | Promise<void>;
+  investingVaultId: string | null;
 };
 
-export function TopYieldOpportunities({ opportunities }: Props) {
+export function TopYieldOpportunities({
+  opportunities,
+  onInvest,
+  investingVaultId,
+}: Props) {
   return (
     <section>
       <div className="mb-6">
@@ -26,9 +32,8 @@ export function TopYieldOpportunities({ opportunities }: Props) {
             <YieldOpportunityCard
               key={vault.id}
               vault={vault}
-              onInvest={() => {
-                // Composer / LI.FI quote in a later milestone
-              }}
+              busy={investingVaultId === vault.id}
+              onInvest={onInvest}
             />
           ))}
         </div>

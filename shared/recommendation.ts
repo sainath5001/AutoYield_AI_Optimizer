@@ -12,3 +12,12 @@ export interface Recommendation {
   reasoning?: string;
   preference: UserPreference;
 }
+
+export type RecommendationSource = "openai" | "fallback";
+
+/** POST /api/recommendation */
+export interface AiRecommendationResponse {
+  vault: Vault;
+  reason: string;
+  source: RecommendationSource;
+}
