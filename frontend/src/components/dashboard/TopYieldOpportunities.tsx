@@ -13,20 +13,26 @@ export function TopYieldOpportunities({ opportunities }: Props) {
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-white">Top yield opportunities</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          Mock vaults across Ethereum & Arbitrum — Earn API integration comes next.
+          USDC vaults on Ethereum & Arbitrum via LI.FI Earn — highest APY first.
         </p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {opportunities.map((vault) => (
-          <YieldOpportunityCard
-            key={vault.id}
-            vault={vault}
-            onInvest={() => {
-              // Placeholder — execution wired with LI.FI later
-            }}
-          />
-        ))}
-      </div>
+      {opportunities.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-zinc-700 bg-zinc-900/30 px-4 py-12 text-center text-sm text-zinc-500">
+          No USDC vaults returned for this network filter.
+        </p>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {opportunities.map((vault) => (
+            <YieldOpportunityCard
+              key={vault.id}
+              vault={vault}
+              onInvest={() => {
+                // Composer / LI.FI quote in a later milestone
+              }}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

@@ -18,7 +18,7 @@ export function UserPreferenceSelector({ value, onChange }: Props) {
     <section className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
       <h2 className="text-lg font-semibold text-white">Your preference</h2>
       <p className="mt-1 text-sm text-zinc-400">
-        How should the AI prioritize opportunities? (UI only for now.)
+        How should the assistant prioritize among loaded USDC vaults?
       </p>
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         {OPTIONS.map((opt) => {

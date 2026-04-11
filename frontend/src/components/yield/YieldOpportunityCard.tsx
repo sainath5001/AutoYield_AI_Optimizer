@@ -29,10 +29,16 @@ export function YieldOpportunityCard({ vault, onInvest }: Props) {
       </p>
       <button
         type="button"
+        disabled={vault.isTransactional === false}
         onClick={() => onInvest?.(vault)}
-        className="mt-auto w-full rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:from-emerald-500 hover:to-cyan-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        title={
+          vault.isTransactional === false
+            ? "Deposits are not available via Composer for this vault yet."
+            : undefined
+        }
+        className="mt-auto w-full rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:from-emerald-500 hover:to-cyan-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:from-emerald-600 disabled:hover:to-cyan-600"
       >
-        Invest
+        {vault.isTransactional === false ? "Unavailable" : "Invest"}
       </button>
     </article>
   );

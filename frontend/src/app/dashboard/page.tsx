@@ -5,18 +5,19 @@ import { WalletInfo } from "@/components/dashboard/WalletInfo";
 import { AIRecommendationPanel } from "@/components/dashboard/AIRecommendationPanel";
 import { UserPreferenceSelector } from "@/components/dashboard/UserPreferenceSelector";
 import { TopYieldOpportunities } from "@/components/dashboard/TopYieldOpportunities";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { Spinner } from "@/components/ui/Spinner";
 import { useUserPreference } from "@/hooks/useUserPreference";
-import {
-  MOCK_YIELD_OPPORTUNITIES,
-  selectMockRecommendation,
-} from "@/lib/mockVaults";
+import { useVaults } from "@/hooks/useVaults";
+import { selectRecommendationForPreference } from "@/lib/selectRecommendation";
 
 export default function DashboardPage() {
   const { preference, setPreference } = useUserPreference();
+  const { vaults, loading, error, refetch } = useVaults();
 
   const recommendedVault = React.useMemo(
-    () => selectMockRecommendation(preference),
-    [preference],
+    () => selectRecommendationForPreference(preference, vaults),
+    [preference, vaults],
   );
 
   return (
@@ -26,18 +27,33 @@ export default function DashboardPage() {
           Dashboard
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
-          Explore mock yield data and preferences — backend & Earn API next.
+          Live vaults from LI.FI Earn (USDC, Ethereum & Arbitrum), sorted by APY.
         </p>
       </div>
 
       <WalletInfo />
 
-      <TopYieldOpportunities opportunities={MOCK_YIELD_OPPORTUNITIES} />
+      {loading ? (
+        <Spinner label="Loading vaults from LI.FI Earn…" />
+      ) : null}
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-        <AIRecommendationPanel vault={recommendedVault} />
-        <UserPreferenceSelector value={preference} onChange={setPreference} />
-      </div>
+      {error ? (
+        <ErrorAlert
+          title="Could not load vaults"
+          message={error}
+          onRetry={() => void refetch()}
+        />
+      ) : null}
+
+      {!loading && !error ? (
+        <>
+          <TopYieldOpportunities opportunities={vaults} />
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+            <AIRecommendationPanel vault={recommendedVault} />
+            <UserPreferenceSelector value={preference} onChange={setPreference} />
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }
