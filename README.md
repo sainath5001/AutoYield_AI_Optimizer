@@ -42,7 +42,9 @@ npm run dev:backend
 | GET | `/api/health` | Liveness |
 | GET | `/api/vaults` | USDC vaults on Ethereum + Arbitrum (sorted by APY, from [Earn Data API](https://docs.li.fi/earn/overview)) |
 | POST | `/api/recommendation` | Body: `{ vaults, preference }` — OpenAI pick + reason (heuristic fallback if `OPENAI_API_KEY` unset) |
+| POST | `/api/deposit-quote` | Body: `{ fromChainId, fromToken, toToken, fromAddress, fromAmount }` — LI.FI Composer quote (`li.quest`) |
+| GET | `/api/portfolio/:address` | Earn-indexed positions for a wallet |
 
-Set **`OPENAI_API_KEY`** in `backend/.env` for live AI recommendations; without it, the API uses a deterministic fallback.
+Set **`OPENAI_API_KEY`** in `backend/.env` for live AI recommendations; without it, the API uses a deterministic fallback. Deposits use **Composer** via `/api/deposit-quote`; portfolio uses the **Earn** portfolio API.
 
 Run **both** `dev:backend` and `dev:frontend` so the dashboard can load vaults and AI.

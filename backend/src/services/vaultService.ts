@@ -39,26 +39,26 @@ function buildHeaders(): Record<string, string> {
   return {};
 }
 
-/** Earn returns APY either as a fraction (e.g. 0.0534 → 5.34%) or as a percent value (>1, e.g. 16.52). */
-function apyTotalToPercent(raw: number | null | undefined): number {
-  if (raw == null || Number.isNaN(raw)) return 0;
-  if (raw > 1) return raw;
-  return raw * 100;
+/**
+ * Normalize Earn `analytics.apy.total` to a display APY (%).
+ *
+ * Upstream data mixes units:
+ * - `(0, 1]` → decimal fraction per LI.FI docs (e.g. 0.052 → 5.2%).
+ * - `(1, 100]` → already in “percent points” (e.g. 9.08 → 9.08%, 16.52 → 16.52%).
+ * - `> 100` → some indexers return 100× inflated figures (e.g. 1530 → 15.3%, 268 → 2.69%).
+ */
+function normalizeEarnApyToPercent(raw: number | null | undefined): number {
+  if (raw == null || Number.isNaN(raw) || raw < 0) return 0;
+  if (raw <= 1) return raw * 100;
+  if (raw <= 100) return raw;
+  return raw / 100;
 }
 
-function inferRiskLevel(vault: EarnVaultApi): Vault["riskLevel"] {
-  const apyPercent = apyTotalToPercent(vault.analytics?.apy?.total);
-  const tags = vault.tags ?? [];
-  if (tags.some((t) => /leverage|boosted|points|yo-/i.test(t))) {
-    return "high";
-  }
-  if (apyPercent >= 18) {
-    return "high";
-  }
-  if (apyPercent >= 10) {
-    return "medium";
-  }
-  return "low";
+/** Stablecoin USDC: APY-based risk bands (no tag heuristics). */
+function riskLevelFromApy(apyPercent: number): Vault["riskLevel"] {
+  if (apyPercent < 5) return "low";
+  if (apyPercent <= 10) return "medium";
+  return "high";
 }
 
 function formatChainName(network: string): string {
@@ -72,7 +72,7 @@ function mapEarnVault(vault: EarnVaultApi): Vault | null {
     return null;
   }
 
-  const apyPercent = apyTotalToPercent(vault.analytics?.apy?.total);
+  const apyPercent = normalizeEarnApyToPercent(vault.analytics?.apy?.total);
 
   return {
     id: vault.slug,
@@ -83,7 +83,7 @@ function mapEarnVault(vault: EarnVaultApi): Vault | null {
     tokenAddress: underlying.address,
     vaultAddress: vault.address,
     apyPercent,
-    riskLevel: inferRiskLevel(vault),
+    riskLevel: riskLevelFromApy(apyPercent),
     isTransactional: vault.isTransactional,
     metadata: {
       name: vault.name,
@@ -92,9 +92,47 @@ function mapEarnVault(vault: EarnVaultApi): Vault | null {
   };
 }
 
+function dedupeKeyProtocolChainToken(v: Vault): string {
+  const p = v.protocol.trim().toLowerCase();
+  const t = v.tokenSymbol.trim().toUpperCase();
+  return `${p}|${v.chainId}|${t}`;
+}
+
 /**
- * Fetches USDC vaults from LI.FI Earn for Ethereum + Arbitrum, merges, dedupes,
- * and sorts by highest APY first.
+ * Keep one vault per (protocol + chainId + token); if duplicates, keep highest APY.
+ */
+function dedupeByProtocolChainToken(vaults: Vault[]): Vault[] {
+  const best = new Map<string, Vault>();
+  for (const v of vaults) {
+    const key = dedupeKeyProtocolChainToken(v);
+    const cur = best.get(key);
+    if (!cur || v.apyPercent > cur.apyPercent) {
+      best.set(key, v);
+    }
+  }
+  return Array.from(best.values());
+}
+
+/**
+ * Filters outliers, dedupes, sorts by APY desc, caps at 10, reapplies risk from APY.
+ * Full `Vault` objects are preserved for API compatibility with the frontend.
+ */
+export function processVaultCandidates(merged: Vault[]): Vault[] {
+  const filtered = merged.filter(
+    (v) => v.apyPercent > 0 && v.apyPercent <= 25,
+  );
+  const deduped = dedupeByProtocolChainToken(filtered);
+  deduped.sort((a, b) => b.apyPercent - a.apyPercent);
+  const top = deduped.slice(0, 10);
+  return top.map((v) => ({
+    ...v,
+    riskLevel: riskLevelFromApy(v.apyPercent),
+  }));
+}
+
+/**
+ * Fetches USDC vaults from LI.FI Earn for Ethereum + Arbitrum, then applies
+ * {@link processVaultCandidates}.
  */
 export async function fetchVaults(): Promise<Vault[]> {
   const headers = buildHeaders();
@@ -116,6 +154,20 @@ export async function fetchVaults(): Promise<Vault[]> {
       },
     );
 
+    // eslint-disable-next-line no-console -- debug trace for LI.FI Earn source verification
+    console.log("[RAW_LIFI_RESPONSE] request", {
+      method: "GET",
+      url: `${EARN_BASE}/vaults`,
+      chainId,
+      params: { asset: "USDC", sortBy: "apy", limit: 100 },
+      hasApiKeyHeader: Boolean(headers["x-lifi-api-key"]),
+    });
+    // eslint-disable-next-line no-console -- debug trace for LI.FI Earn source verification
+    console.log(
+      "[RAW_LIFI_RESPONSE] full_raw_api_response",
+      JSON.stringify(body),
+    );
+
     const rows = body.data ?? [];
     for (const row of rows) {
       const mapped = mapEarnVault(row);
@@ -125,15 +177,14 @@ export async function fetchVaults(): Promise<Vault[]> {
     }
   }
 
-  const seen = new Set<string>();
-  const deduped = merged.filter((v) => {
-    const key = `${v.chainId}-${(v.vaultAddress ?? v.id).toLowerCase()}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  // eslint-disable-next-line no-console -- debug trace for LI.FI Earn source verification
+  console.log(
+    "[RAW_LIFI_RESPONSE] vault_list_before_filtering",
+    JSON.stringify({
+      count: merged.length,
+      vaults: merged,
+    }),
+  );
 
-  deduped.sort((a, b) => b.apyPercent - a.apyPercent);
-
-  return deduped;
+  return processVaultCandidates(merged);
 }

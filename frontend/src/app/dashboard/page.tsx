@@ -11,19 +11,25 @@ import { TopYieldOpportunities } from "@/components/dashboard/TopYieldOpportunit
 import { PortfolioSection } from "@/components/dashboard/PortfolioSection";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { Spinner } from "@/components/ui/Spinner";
-import { PortfolioProvider, usePortfolio } from "@/contexts/PortfolioContext";
 import { useUserPreference } from "@/hooks/useUserPreference";
 import { useVaults } from "@/hooks/useVaults";
 import { useAiRecommendation } from "@/hooks/useAiRecommendation";
-import { useInvestMock } from "@/hooks/useInvestMock";
+import { useComposerDeposit } from "@/hooks/useComposerDeposit";
+import { useEarnPortfolio } from "@/hooks/useEarnPortfolio";
 
-function DashboardInner() {
+export default function DashboardPage() {
   const { preference, setPreference } = useUserPreference();
   const { vaults, loading: vaultsLoading, error: vaultsError, refetch } =
     useVaults();
-  const { position, setPosition } = usePortfolio();
-  const { invest } = useInvestMock();
+  const {
+    positions,
+    loading: portfolioLoading,
+    error: portfolioError,
+    refetch: refetchPortfolio,
+  } = useEarnPortfolio();
+  const { deposit } = useComposerDeposit();
   const [investingId, setInvestingId] = React.useState<string | null>(null);
+  const [depositUsdc, setDepositUsdc] = React.useState("5");
 
   const canRecommend =
     !vaultsLoading && !vaultsError && vaults.length > 0;
@@ -46,16 +52,11 @@ function DashboardInner() {
   const handleInvest = React.useCallback(
     async (vault: Vault) => {
       setInvestingId(vault.id);
-      const toastId = toast.loading("Open your wallet to sign the demo intent…");
+      const toastId = toast.loading("Getting LI.FI Composer quote…");
       try {
-        await invest(vault);
-        toast.success("Demo deposit recorded in portfolio.", { id: toastId });
-        setPosition({
-          vault,
-          amountUsd: "1,000.00",
-          apyPercent: vault.apyPercent,
-          investedAt: Date.now(),
-        });
+        await deposit(vault, depositUsdc);
+        toast.success("Transaction submitted.", { id: toastId });
+        await refetchPortfolio();
       } catch (e) {
         const msg = e instanceof Error ? e.message : "Transaction failed";
         const lower = msg.toLowerCase();
@@ -74,7 +75,7 @@ function DashboardInner() {
         setInvestingId(null);
       }
     },
-    [invest, setPosition],
+    [deposit, depositUsdc, refetchPortfolio],
   );
 
   const handleRebalance = React.useCallback(() => {
@@ -93,14 +94,41 @@ function DashboardInner() {
           Dashboard
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
-          Live vaults from LI.FI Earn, AI pick from OpenAI (or heuristic), and a
-          demo invest flow.
+          LI.FI Earn vaults, OpenAI recommendation, Composer deposits, and Earn
+          portfolio positions.
         </p>
       </div>
 
       <WalletInfo />
 
-      <PortfolioSection position={position} />
+      <PortfolioSection
+        positions={positions}
+        loading={portfolioLoading}
+        error={portfolioError}
+        onRetry={() => void refetchPortfolio()}
+      />
+
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-4 sm:p-5">
+        <label
+          htmlFor="deposit-usdc"
+          className="text-sm font-medium text-zinc-300"
+        >
+          USDC amount per deposit
+        </label>
+        <p className="mt-0.5 text-xs text-zinc-500">
+          Used for LI.FI Composer quotes (same-chain USDC → vault). You must
+          have enough USDC + gas on the vault&apos;s chain.
+        </p>
+        <input
+          id="deposit-usdc"
+          type="text"
+          inputMode="decimal"
+          value={depositUsdc}
+          onChange={(e) => setDepositUsdc(e.target.value)}
+          className="mt-2 w-full max-w-xs rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          placeholder="e.g. 10"
+        />
+      </div>
 
       {vaultsLoading ? (
         <Spinner label="Loading vaults from LI.FI Earn…" />
@@ -138,13 +166,5 @@ function DashboardInner() {
         </>
       ) : null}
     </div>
-  );
-}
-
-export default function DashboardPage() {
-  return (
-    <PortfolioProvider>
-      <DashboardInner />
-    </PortfolioProvider>
   );
 }
