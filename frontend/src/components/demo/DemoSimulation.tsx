@@ -22,13 +22,15 @@ const AMOUNT_USD = 1000;
 /** Real vault contracts for side-by-side LI.FI APY comparison (not simulated). */
 const DEMO_APY_ETH_USDC = {
   chainId: 1,
-  address: "0x98c23e9d8f34fefb1b7bd6a91b7ff122f4e16f5c",
-  label: "Ethereum · Aave v3 USDC (illustrative “before”)",
+  // A vault address that consistently exists in Earn detail responses.
+  // (Same vault address exists on multiple chains; chainId disambiguates.)
+  address: "0x0000000f2eb9f69274678c76222b35eec7588a65",
+  label: "Ethereum · yo-protocol USDC (illustrative “before”)",
 };
 const DEMO_APY_ARB_USDC = {
   chainId: 42161,
-  address: "0x724dc807b04555b71ed48a6896b6f41593b8c637",
-  label: "Arbitrum · Aave v3 USDC (illustrative “after”)",
+  address: "0x0000000f2eb9f69274678c76222b35eec7588a65",
+  label: "Arbitrum · yo-protocol USDC (illustrative “after”)",
 };
 
 export function DemoSimulation() {

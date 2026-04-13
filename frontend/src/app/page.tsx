@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { DemoSimulation } from "@/components/demo/DemoSimulation";
 
 export default function HomePage() {
   return (
@@ -32,8 +31,110 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="relative mx-auto w-full max-w-2xl px-4 pb-24 sm:px-6">
-        <DemoSimulation />
+      <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 sm:px-6">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Built for demos, designed like a real app
+          </p>
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            A modern DeFi yield dashboard — end to end
+          </h2>
+          <p className="mt-3 text-sm text-zinc-400 sm:text-base">
+            Discover Earn vaults, visualize APY horizons, get an AI suggestion,
+            and execute deposits via Composer — all in one flow.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 shadow-lg ring-1 ring-zinc-800/80">
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-400/90">
+              Earn discovery
+            </p>
+            <p className="mt-2 text-base font-semibold text-white">
+              Real vaults, real APY
+            </p>
+            <p className="mt-2 text-sm text-zinc-400">
+              Vault lists and analytics come from the LI.FI Earn Data API.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 shadow-lg ring-1 ring-zinc-800/80">
+            <p className="text-xs font-semibold uppercase tracking-wide text-cyan-400/90">
+              APY trend
+            </p>
+            <p className="mt-2 text-base font-semibold text-white">
+              Today / 7D / 30D
+            </p>
+            <p className="mt-2 text-sm text-zinc-400">
+              Horizon chart based on LI.FI rolling averages (apy1d/7d/30d) vs
+              current.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 shadow-lg ring-1 ring-zinc-800/80">
+            <p className="text-xs font-semibold uppercase tracking-wide text-sky-400/90">
+              AI insight
+            </p>
+            <p className="mt-2 text-base font-semibold text-white">
+              Explainable recommendation
+            </p>
+            <p className="mt-2 text-sm text-zinc-400">
+              The assistant picks a vault based on your preference and explains
+              why.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 shadow-lg ring-1 ring-zinc-800/80">
+            <p className="text-xs font-semibold uppercase tracking-wide text-violet-400/90">
+              Demo mode
+            </p>
+            <p className="mt-2 text-base font-semibold text-white">
+              One-click storyline
+            </p>
+            <p className="mt-2 text-sm text-zinc-400">
+              Run a guided simulation on the dashboard — no funds required.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              title: "Docs",
+              href: "https://docs.li.fi",
+              desc: "Earn, Composer, API reference, recipes.",
+            },
+            {
+              title: "Earn overview",
+              href: "https://docs.li.fi/earn/overview",
+              desc: "Vault schema, analytics, portfolio.",
+            },
+            {
+              title: "Composer overview",
+              href: "https://docs.li.fi/composer/overview",
+              desc: "One-click deposits and zaps.",
+            },
+            {
+              title: "Support",
+              href: "https://support.li.fi",
+              desc: "Help center and troubleshooting.",
+            },
+          ].map((l) => (
+            <a
+              key={l.title}
+              href={l.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 shadow-lg ring-1 ring-zinc-800/80 transition hover:border-emerald-500/30 hover:bg-zinc-900/60"
+            >
+              <p className="text-base font-semibold text-white">{l.title}</p>
+              <p className="mt-2 text-sm text-zinc-400">{l.desc}</p>
+              <p className="mt-3 text-xs font-semibold text-emerald-400/90 group-hover:text-emerald-300">
+                Open ↗
+              </p>
+            </a>
+          ))}
+        </div>
       </section>
     </div>
   );

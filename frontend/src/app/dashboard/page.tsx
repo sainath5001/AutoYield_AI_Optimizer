@@ -18,6 +18,10 @@ import { useComposerDeposit } from "@/hooks/useComposerDeposit";
 import { useEarnPortfolio } from "@/hooks/useEarnPortfolio";
 import { DemoSimulation } from "@/components/demo/DemoSimulation";
 
+// This page depends on wallet state (client-only) via wagmi/rainbowkit.
+// Avoid static prerendering at build time to prevent provider-less rendering.
+export const dynamic = "force-dynamic";
+
 export default function DashboardPage() {
   const { preference, setPreference } = useUserPreference();
   const { vaults, loading: vaultsLoading, error: vaultsError, refetch } =

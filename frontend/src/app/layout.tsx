@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { AppToaster } from "@/components/ui/AppToaster";
-import { Web3Providers } from "@/components/providers/Web3Providers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,10 +31,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100">
-        <Web3Providers>
-          <SiteShell>{children}</SiteShell>
-          <AppToaster />
-        </Web3Providers>
+        <SiteShell>{children}</SiteShell>
+        <AppToaster />
       </body>
     </html>
   );
