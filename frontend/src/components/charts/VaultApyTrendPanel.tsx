@@ -34,6 +34,7 @@ export function VaultApyTrendPanel({
   const [profile, setProfile] = React.useState<VaultApyProfileDto | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [reloadKey, setReloadKey] = React.useState(0);
 
   React.useEffect(() => {
     if (!enabled) {
@@ -59,7 +60,7 @@ export function VaultApyTrendPanel({
     return () => {
       cancelled = true;
     };
-  }, [chainId, vaultAddress, enabled]);
+  }, [chainId, vaultAddress, enabled, reloadKey]);
 
   const chartPoints = React.useMemo(() => {
     if (!profile) return [];
@@ -118,12 +119,27 @@ export function VaultApyTrendPanel({
           <Skeleton className="h-10 w-full" />
         </div>
       ) : error ? (
-        <p className="py-6 text-center text-sm text-red-400">{error}</p>
+        <div className="mt-4 rounded-xl border border-rose-500/30 bg-rose-950/30 px-4 py-4 text-sm text-rose-200">
+          <p>{error}</p>
+          <button
+            type="button"
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="mt-3 text-xs font-semibold text-rose-100 underline underline-offset-2"
+          >
+            Retry
+          </button>
+        </div>
       ) : profile ? (
         <>
           <div className="mt-4">
             <APYChart data={chartPoints} selectedRange={range} />
           </div>
+          <p className="mt-2 text-center text-[10px] text-zinc-500">
+            Range:{" "}
+            {range === "today" ? "Today" : range === "7d" ? "7 days" : "30 days"}{" "}
+            · Values are LI.FI rolling averages (apy1d / apy7d / apy30d) vs
+            current
+          </p>
           {insight ? (
             <p
               className={`mt-3 rounded-lg border px-3 py-2 text-xs leading-relaxed ${insightClass}`}

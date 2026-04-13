@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useAccount, useBalance, useChainId, useReadContract } from "wagmi";
 import { formatUnits } from "viem";
 
@@ -30,6 +31,9 @@ function truncateAddress(addr: string) {
 }
 
 export function WalletInfo() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const usdcAddress = USDC_BY_CHAIN[chainId];
@@ -67,7 +71,7 @@ export function WalletInfo() {
     : null;
 
   return (
-    <section className="rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900/80 to-zinc-950 p-6 shadow-xl">
+    <section className="rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900/80 to-zinc-950 p-6 shadow-xl">
       <h2 className="text-sm font-medium uppercase tracking-wider text-zinc-500">
         Wallet
       </h2>
@@ -79,13 +83,13 @@ export function WalletInfo() {
         <div>
           <p className="text-xs text-zinc-500">Address</p>
           <p className="mt-1 font-mono text-sm text-white">
-            {isConnected && address ? truncateAddress(address) : "—"}
+            {mounted && isConnected && address ? truncateAddress(address) : "—"}
           </p>
         </div>
         <div>
           <p className="text-xs text-zinc-500">USDC</p>
           <p className="mt-1 font-mono text-sm tabular-nums text-white">
-            {!address
+            {!mounted || !address
               ? "—"
               : !usdcAddress
                 ? "Switch to Ethereum or Arbitrum"
@@ -99,7 +103,7 @@ export function WalletInfo() {
         <div>
           <p className="text-xs text-zinc-500">Native</p>
           <p className="mt-1 font-mono text-sm tabular-nums text-white">
-            {!address ? "—" : ethLoading ? "…" : ethFormatted ?? "—"}
+            {!mounted || !address ? "—" : ethLoading ? "…" : ethFormatted ?? "—"}
           </p>
         </div>
       </div>

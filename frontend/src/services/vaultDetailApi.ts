@@ -12,7 +12,9 @@ export async function fetchVaultApyProfile(
     return data;
   } catch (e) {
     if (axios.isAxiosError(e) && e.response?.status === 404) {
-      throw new Error("Vault detail not found for this chain and address.");
+      throw new Error(
+        "APY profile unavailable for this vault right now (LI.FI Earn indexing).",
+      );
     }
     throw e instanceof Error ? e : new Error("Failed to load vault APY profile.");
   }
