@@ -16,6 +16,7 @@ import { useVaults } from "@/hooks/useVaults";
 import { useAiRecommendation } from "@/hooks/useAiRecommendation";
 import { useComposerDeposit } from "@/hooks/useComposerDeposit";
 import { useEarnPortfolio } from "@/hooks/useEarnPortfolio";
+import { DemoSimulation } from "@/components/demo/DemoSimulation";
 
 export default function DashboardPage() {
   const { preference, setPreference } = useUserPreference();
@@ -98,6 +99,8 @@ export default function DashboardPage() {
           portfolio positions.
         </p>
       </div>
+
+      <DemoSimulation />
 
       <WalletInfo />
 
