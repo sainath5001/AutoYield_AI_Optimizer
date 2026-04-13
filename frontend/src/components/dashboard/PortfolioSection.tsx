@@ -37,7 +37,7 @@ export function PortfolioSection({
           <button
             type="button"
             onClick={onRetry}
-            className="mt-3 text-xs font-semibold text-rose-100 underline"
+            className="mt-3 text-xs font-semibold text-rose-100 underline underline-offset-2"
           >
             Retry
           </button>

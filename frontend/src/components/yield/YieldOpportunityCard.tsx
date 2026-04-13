@@ -44,7 +44,7 @@ export function YieldOpportunityCard({ vault, onInvest, busy }: Props) {
           <button
             type="button"
             onClick={() => setShowApyTrend((s) => !s)}
-            className="text-xs font-semibold text-cyan-400/90 underline-offset-2 hover:text-cyan-300 hover:underline"
+            className="text-xs font-semibold text-cyan-400/90 underline underline-offset-2 hover:text-cyan-300"
           >
             {showApyTrend ? "Hide" : "Show"} APY trend (LI.FI)
           </button>
@@ -53,7 +53,6 @@ export function YieldOpportunityCard({ vault, onInvest, busy }: Props) {
               chainId={vault.chainId}
               vaultAddress={vault.vaultAddress}
               vaultLabel={`${vault.protocol} · ${vault.chainName}`}
-              enabled
             />
           ) : null}
         </div>
@@ -69,7 +68,7 @@ export function YieldOpportunityCard({ vault, onInvest, busy }: Props) {
               ? "Composer does not list this vault as depositable yet."
               : undefined
         }
-        className="mt-auto w-full rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:from-emerald-500 hover:to-cyan-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:from-emerald-600 disabled:hover:to-cyan-600"
+        className="mt-auto w-full rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:from-emerald-500 hover:to-cyan-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:from-emerald-600 disabled:hover:to-cyan-600"
       >
         {busy
           ? "Signing…"

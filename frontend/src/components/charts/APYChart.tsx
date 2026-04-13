@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import type { ApyTrendRange } from "@shared/vaultApyTrend";
 import {
   CartesianGrid,
@@ -17,7 +18,10 @@ type Props = {
   selectedRange: ApyTrendRange;
 };
 
-export function APYChart({ data, selectedRange }: Props) {
+export const APYChart = React.memo(function APYChart({
+  data,
+  selectedRange,
+}: Props) {
   if (data.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-zinc-500">
@@ -78,4 +82,4 @@ export function APYChart({ data, selectedRange }: Props) {
       </p>
     </div>
   );
-}
+});

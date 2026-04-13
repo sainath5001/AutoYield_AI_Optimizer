@@ -18,8 +18,15 @@ const wagmiConfig = getDefaultConfig({
   projectId: walletConnectProjectId,
   chains: [mainnet, arbitrum],
   transports: {
-    [mainnet.id]: http(),
-    [arbitrum.id]: http(),
+    // Explicit public RPCs — default `http()` may use endpoints that block browser CORS (e.g. eth.merkle.io).
+    [mainnet.id]: http(
+      process.env.NEXT_PUBLIC_MAINNET_RPC_URL ??
+        "https://ethereum.publicnode.com",
+    ),
+    [arbitrum.id]: http(
+      process.env.NEXT_PUBLIC_ARBITRUM_RPC_URL ??
+        "https://arbitrum-one.publicnode.com",
+    ),
   },
 });
 

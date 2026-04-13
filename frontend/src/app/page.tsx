@@ -25,7 +25,7 @@ export default function HomePage() {
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
             href="/dashboard"
-            className="inline-flex min-w-[200px] items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition hover:from-emerald-400 hover:to-cyan-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex min-w-[200px] items-center justify-center rounded-xl bg-linear-to-r from-emerald-500 to-cyan-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition hover:from-emerald-400 hover:to-cyan-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             Start earning
           </Link>

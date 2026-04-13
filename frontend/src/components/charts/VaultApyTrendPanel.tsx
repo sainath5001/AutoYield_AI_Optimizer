@@ -8,6 +8,7 @@ import {
 } from "@/lib/vaultApyTrend";
 import { fetchVaultApyProfile } from "@/services/vaultDetailApi";
 import { APYChart } from "./APYChart";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const RANGES: { id: ApyTrendRange; label: string }[] = [
   { id: "today", label: "Today" },
@@ -108,9 +109,14 @@ export function VaultApyTrendPanel({
       </div>
 
       {loading ? (
-        <p className="py-10 text-center text-sm text-zinc-500">
-          Loading APY profile from API…
-        </p>
+        <div className="mt-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-4 w-14" />
+          </div>
+          <Skeleton className="h-56 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
       ) : error ? (
         <p className="py-6 text-center text-sm text-red-400">{error}</p>
       ) : profile ? (
@@ -126,7 +132,11 @@ export function VaultApyTrendPanel({
             </p>
           ) : null}
         </>
-      ) : null}
+      ) : (
+        <p className="py-6 text-center text-sm text-zinc-500">
+          No APY profile available for this vault.
+        </p>
+      )}
     </div>
   );
 }

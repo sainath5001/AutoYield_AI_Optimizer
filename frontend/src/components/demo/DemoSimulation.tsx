@@ -88,7 +88,7 @@ export function DemoSimulation() {
             <button
               type="button"
               onClick={startDemo}
-              className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-900/30 transition hover:from-violet-500 hover:to-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+              className="rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-900/30 transition hover:from-violet-500 hover:to-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
             >
               Run Demo
             </button>
@@ -208,7 +208,7 @@ export function DemoSimulation() {
         {/* Step 4 — rebalancing */}
         {phase === "rebalancing" && (
           <div
-            className="flex animate-in flex-col items-center justify-center gap-3 rounded-xl border border-zinc-700 bg-zinc-950/60 py-8"
+            className="flex flex-col items-center justify-center gap-3 rounded-xl border border-zinc-700 bg-zinc-950/60 py-8"
             role="status"
             aria-live="polite"
           >

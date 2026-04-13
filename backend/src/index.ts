@@ -10,7 +10,14 @@ import { vaultDetailRouter } from "./routes/vaultDetail";
 const app = express();
 const port = Number(process.env.PORT) || 4000;
 
-app.use(cors());
+const corsOptions: cors.CorsOptions = {
+  origin: true,
+  methods: ["GET", "POST", "OPTIONS", "HEAD"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false,
+};
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 app.use("/api", healthRouter);
