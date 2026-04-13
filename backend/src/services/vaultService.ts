@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { Vault } from "../types/vault";
+import { normalizeEarnApyToPercent } from "../utils/earnApyNormalize";
 
 const EARN_BASE = "https://earn.li.fi/v1/earn";
 
@@ -37,21 +38,6 @@ function buildHeaders(): Record<string, string> {
     return { "x-lifi-api-key": key };
   }
   return {};
-}
-
-/**
- * Normalize Earn `analytics.apy.total` to a display APY (%).
- *
- * Upstream data mixes units:
- * - `(0, 1]` → decimal fraction per LI.FI docs (e.g. 0.052 → 5.2%).
- * - `(1, 100]` → already in “percent points” (e.g. 9.08 → 9.08%, 16.52 → 16.52%).
- * - `> 100` → some indexers return 100× inflated figures (e.g. 1530 → 15.3%, 268 → 2.69%).
- */
-function normalizeEarnApyToPercent(raw: number | null | undefined): number {
-  if (raw == null || Number.isNaN(raw) || raw < 0) return 0;
-  if (raw <= 1) return raw * 100;
-  if (raw <= 100) return raw;
-  return raw / 100;
 }
 
 /** Stablecoin USDC: APY-based risk bands (no tag heuristics). */

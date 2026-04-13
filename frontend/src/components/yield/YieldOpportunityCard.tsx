@@ -1,6 +1,8 @@
 "use client";
 
 import type { Vault } from "@shared/vault";
+import * as React from "react";
+import { VaultApyTrendPanel } from "@/components/charts/VaultApyTrendPanel";
 import { RiskBadge } from "./RiskBadge";
 
 type Props = {
@@ -17,6 +19,7 @@ function canDeposit(vault: Vault): boolean {
 
 export function YieldOpportunityCard({ vault, onInvest, busy }: Props) {
   const allowed = canDeposit(vault);
+  const [showApyTrend, setShowApyTrend] = React.useState(false);
 
   return (
     <article className="group flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 shadow-xl transition hover:border-emerald-500/30 hover:bg-zinc-900/80">
@@ -33,9 +36,28 @@ export function YieldOpportunityCard({ vault, onInvest, busy }: Props) {
         </span>
         <span className="text-sm text-zinc-500">APY</span>
       </div>
-      <p className="mb-4 text-xs text-zinc-500">
+      <p className="mb-3 text-xs text-zinc-500">
         {vault.tokenSymbol} · Chain ID {vault.chainId}
       </p>
+      {vault.vaultAddress ? (
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => setShowApyTrend((s) => !s)}
+            className="text-xs font-semibold text-cyan-400/90 underline-offset-2 hover:text-cyan-300 hover:underline"
+          >
+            {showApyTrend ? "Hide" : "Show"} APY trend (LI.FI)
+          </button>
+          {showApyTrend ? (
+            <VaultApyTrendPanel
+              chainId={vault.chainId}
+              vaultAddress={vault.vaultAddress}
+              vaultLabel={`${vault.protocol} · ${vault.chainName}`}
+              enabled
+            />
+          ) : null}
+        </div>
+      ) : null}
       <button
         type="button"
         disabled={!allowed || busy}

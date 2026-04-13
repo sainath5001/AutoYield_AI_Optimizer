@@ -5,6 +5,7 @@ import { healthRouter } from "./routes/health";
 import { vaultsRouter } from "./routes/vaults";
 import { recommendationRouter } from "./routes/recommendation";
 import { lifiRouter } from "./routes/lifi";
+import { vaultDetailRouter } from "./routes/vaultDetail";
 
 const app = express();
 const port = Number(process.env.PORT) || 4000;
@@ -16,6 +17,7 @@ app.use("/api", healthRouter);
 app.use("/api", vaultsRouter);
 app.use("/api", recommendationRouter);
 app.use("/api", lifiRouter);
+app.use("/api", vaultDetailRouter);
 
 app.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`);

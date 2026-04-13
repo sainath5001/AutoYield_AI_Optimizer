@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { VaultApyTrendPanel } from "@/components/charts/VaultApyTrendPanel";
 
 type DemoPhase = "idle" | "initial" | "opportunity" | "rebalancing" | "complete";
 
@@ -17,6 +18,18 @@ const MOCK_VAULT_B = {
 };
 
 const AMOUNT_USD = 1000;
+
+/** Real vault contracts for side-by-side LI.FI APY comparison (not simulated). */
+const DEMO_APY_ETH_USDC = {
+  chainId: 1,
+  address: "0x98c23e9d8f34fefb1b7bd6a91b7ff122f4e16f5c",
+  label: "Ethereum · Aave v3 USDC (illustrative “before”)",
+};
+const DEMO_APY_ARB_USDC = {
+  chainId: 42161,
+  address: "0x724dc807b04555b71ed48a6896b6f41593b8c637",
+  label: "Arbitrum · Aave v3 USDC (illustrative “after”)",
+};
 
 export function DemoSimulation() {
   const [phase, setPhase] = React.useState<DemoPhase>("idle");
@@ -143,6 +156,24 @@ export function DemoSimulation() {
             <p className="text-center text-base font-semibold text-amber-200">
               ⚡ New opportunity detected!
             </p>
+          </div>
+        )}
+
+        {/* Live LI.FI APY horizon charts (same API as production) */}
+        {(phase === "opportunity" ||
+          phase === "rebalancing" ||
+          phase === "complete") && (
+          <div className="grid gap-4 md:grid-cols-2">
+            <VaultApyTrendPanel
+              chainId={DEMO_APY_ETH_USDC.chainId}
+              vaultAddress={DEMO_APY_ETH_USDC.address}
+              vaultLabel={DEMO_APY_ETH_USDC.label}
+            />
+            <VaultApyTrendPanel
+              chainId={DEMO_APY_ARB_USDC.chainId}
+              vaultAddress={DEMO_APY_ARB_USDC.address}
+              vaultLabel={DEMO_APY_ARB_USDC.label}
+            />
           </div>
         )}
 
