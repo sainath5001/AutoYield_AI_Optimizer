@@ -34,17 +34,19 @@ It uses **LI.FI Earn** for vault discovery + standardized analytics and **LI.FI 
 flowchart LR
   U[User] -->|opens| FE[Next.js Frontend]
   FE -->|GET /api/vaults| BE[Express Backend]
-  BE -->|GET /v1/earn/vaults| EARN[LI.FI Earn Data API\nhttps://earn.li.fi]
+  BE -->|GET /v1/earn/vaults| EARN[LI.FI Earn Data API]
   FE -->|GET /api/vault-detail/:chainId/:address| BE
   BE -->|GET /v1/earn/vaults/:chainId/:address| EARN
   FE -->|GET /api/portfolio/:address| BE
   BE -->|GET /v1/earn/portfolio/:address/positions| EARN
   FE -->|POST /api/recommendation| BE
-  BE -->|OpenAI (optional)| OAI[OpenAI API]
+  BE -->|OpenAI optional| OAI[OpenAI API]
   FE -->|POST /api/deposit-quote| BE
-  BE -->|GET /v1/quote| QUEST[LI.FI Composer\nhttps://li.quest]
+  BE -->|GET /v1/quote| QUEST[LI.FI Composer]
   FE -->|sign + send tx| WALLET[Wallet]
 ```
+
+Earn base URL: `https://earn.li.fi` · Composer base URL: `https://li.quest`
 
 ## API (backend)
 
