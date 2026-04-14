@@ -28,7 +28,7 @@ It uses **LI.FI Earn** for vault discovery + standardized analytics and **LI.FI 
 | `backend/` | Express + TypeScript API (proxies Earn + Composer, keeps keys server-side) |
 | `shared/` | Shared TypeScript types used by frontend and backend |
 
-## System flow (Mermaid)
+## System flow
 
 ```mermaid
 flowchart LR
@@ -36,9 +36,9 @@ flowchart LR
   FE -->|GET /api/vaults| BE[Express Backend]
   BE -->|GET /v1/earn/vaults| EARN[LI.FI Earn Data API\nhttps://earn.li.fi]
   FE -->|GET /api/vault-detail/:chainId/:address| BE
-  BE -->|GET /v1/earn/vaults/{chainId}/{address}| EARN
+  BE -->|GET /v1/earn/vaults/:chainId/:address| EARN
   FE -->|GET /api/portfolio/:address| BE
-  BE -->|GET /v1/earn/portfolio/{address}/positions| EARN
+  BE -->|GET /v1/earn/portfolio/:address/positions| EARN
   FE -->|POST /api/recommendation| BE
   BE -->|OpenAI (optional)| OAI[OpenAI API]
   FE -->|POST /api/deposit-quote| BE
